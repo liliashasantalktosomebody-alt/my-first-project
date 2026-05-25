@@ -1,4 +1,20 @@
-<!DOCTYPE html><html lang="bn">
+function playVideo() {
+  video.play();
+}
+
+function pauseVideo() {
+  video.pause();
+}
+
+function uploadVideo(event) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const videoURL = URL.createObjectURL(file);
+    video.src = videoURL;
+    video.play();
+  }
+}<!DOCTYPE html><html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
