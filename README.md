@@ -271,3 +271,213 @@ button:hover {
     }
   </script></body>
 </html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Runner Game</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:linear-gradient(to bottom,#87ceeb,#ffffff);
+    font-family:Arial;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+}
+
+#ground{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:120px;
+    background:#3cb371;
+}
+
+#dino{
+    width:80px;
+    height:80px;
+    background:#16a34a;
+    position:absolute;
+    bottom:120px;
+    left:100px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+.eye{
+    width:10px;
+    height:10px;
+    background:black;
+    border-radius:50%;
+    position:absolute;
+    top:20px;
+}
+
+#eye1{ left:18px; }
+#eye2{ right:18px; }
+
+#cactus{
+    width:50px;
+    height:100px;
+    background:#065f46;
+    position:absolute;
+    bottom:120px;
+    right:-100px;
+    border-radius:10px;
+}
+
+#score{
+    position:absolute;
+    top:20px;
+    left:20px;
+    font-size:35px;
+    font-weight:bold;
+    color:#111827;
+}
+
+#startText{
+    position:absolute;
+    top:45%;
+    width:100%;
+    text-align:center;
+    font-size:40px;
+    color:#111827;
+    font-weight:bold;
+}
+
+.cloud{
+    position:absolute;
+    width:120px;
+    height:50px;
+    background:white;
+    border-radius:50px;
+    opacity:0.9;
+}
+
+</style>
+</head>
+<body>
+
+<div id="game">
+
+<div class="cloud" style="top:80px;left:200px"></div>
+<div class="cloud" style="top:150px;left:700px"></div>
+
+<div id="score">Score: 0</div>
+<div id="startText">Tap SPACE or Touch Screen</div>
+
+<div id="dino">
+<div class="eye" id="eye1"></div>
+<div class="eye" id="eye2"></div>
+</div>
+
+<div id="cactus"></div>
+<div id="ground"></div>
+
+</div>
+
+<script>
+const dino = document.getElementById('dino');
+const cactus = document.getElementById('cactus');
+const scoreText = document.getElementById('score');
+const startText = document.getElementById('startText');
+
+let jumping = false;
+let score = 0;
+let cactusX = window.innerWidth;
+let gameStarted = false;
+let speed = 8;
+
+function jump(){
+    if(jumping) return;
+
+    jumping = true;
+
+    let up = 0;
+
+    let jumpUp = setInterval(()=>{
+        up += 20;
+        dino.style.bottom = 120 + up + 'px';
+
+        if(up >= 220){
+            clearInterval(jumpUp);
+
+            let down = setInterval(()=>{
+                up -= 20;
+                dino.style.bottom = 120 + up + 'px';
+
+                if(up <= 0){
+                    clearInterval(down);
+                    jumping = false;
+                }
+            },20);
+        }
+    },20);
+}
+
+function startGame(){
+    if(gameStarted) return;
+    gameStarted = true;
+    startText.style.display='none';
+}
+
+function gameLoop(){
+
+    if(gameStarted){
+
+        cactusX -= speed;
+        cactus.style.left = cactusX + 'px';
+
+        if(cactusX < -100){
+            cactusX = window.innerWidth;
+            score++;
+            scoreText.innerHTML = 'Score: ' + score;
+
+            if(score % 5 === 0){
+                speed += 1;
+            }
+        }
+
+        const dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue('bottom'));
+
+        if(cactusX > 80 && cactusX < 160 && dinoBottom < 190){
+            alert('💀 Game Over! Your Score: ' + score);
+            location.reload();
+        }
+    }
+
+    requestAnimationFrame(gameLoop);
+}
+
+document.addEventListener('keydown',(e)=>{
+    if(e.code === 'Space'){
+        startGame();
+        jump();
+    }
+});
+
+document.addEventListener('touchstart',()=>{
+    startGame();
+    jump();
+});
+
+gameLoop();
+</script>
+
+</body>
+</html>
